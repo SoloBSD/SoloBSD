@@ -1,0 +1,38 @@
+#!/bin/sh
+# $Id$
+
+# PROVIDE: interfaces
+# BEFORE: NETWORKING netif
+# REQUIRE: mdinit mfsbsd
+# KEYWORD: FreeBSD
+
+. /etc/rc.subr
+
+name="interfaces"
+start_cmd="interfaces_start"
+stop_cmd=":"
+
+interfaces_start()
+{
+	if [ -z "${mac_interfaces}" ]; then
+	    exit 0
+	fi
+	for if in ${mac_interfaces}; do
+		_cmac=`eval echo "\\$ifconfig_${if}_mac"`
+		if [ -n "$_cmac" ]; then
+			_dif=`/sbin/ifconfig -l | /usr/bin/sed -E 's/lo[0-9]+//g'`
+			for i in $_dif; do
+				_mac=`/sbin/ifconfig $i | /usr/bin/grep ether | /usr/bin/awk '{ print $2 }'`
+				if [ "$_mac" = "$_cmac" ]; then
+					_cif=`eval echo "\\$ifconfig_${if}"`
+					if [ -n "$_cif" ]; then
+						echo "ifconfig_$i=\"${_cif}\"" >> /etc/rc.conf.d/network
+					fi
+				fi
+			done
+		fi
+	done
+}
+
+load_rc_config $name
+run_rc_command "$1"

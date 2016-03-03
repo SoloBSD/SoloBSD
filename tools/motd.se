@@ -1,0 +1,16 @@
+Welcome to mfsBSD SE, the memory based FreeBSD distribution.
+This is a special version intended for full-ZFS install of FreeBSD
+
+To make a full-ZFS FreeBSD install from this ISO:
+
+1. Mount the CD device 
+( e.g. mount_cd9660 /dev/cd0 /cdrom )
+2. Run "zfsinstall" with path to release directory and your drive
+( e.g. zfsinstall -d ada0 -u /cdrom/9.2-RELEASE-amd64 )
+
+Run zfsinstall with the -h flag for help or without flags for options.
+I recommend creating a GPT swap partition (e.g. -s 2G for a 2GB swap).
+
+Feel free to email me with any bug reports or feature suggestions.
+Martin Matuska <mm@FreeBSD.org>
+http://mfsbsd.vx.sk/
