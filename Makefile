@@ -10,17 +10,10 @@
 # User-defined variables
 #
 BASE?=/cdrom/usr/freebsd-dist
-<<<<<<< HEAD
 KERNCONF?= SOLOBSD
 MFSROOT_FREE_INODES?=10%
 MFSROOT_FREE_BLOCKS?=10%
 MFSROOT_MAXSIZE?=160m
-=======
-KERNCONF?= GENERIC
-MFSROOT_FREE_INODES?=10%
-MFSROOT_FREE_BLOCKS?=10%
-MFSROOT_MAXSIZE?=80m
->>>>>>> upstream/master
 
 # If you want to build your own kernel and make you own world, you need to set
 # -DCUSTOM or CUSTOM=1
@@ -38,11 +31,7 @@ MFSROOT_MAXSIZE?=80m
 #
 # Paths
 #
-<<<<<<< HEAD
-SRC_DIR?=/usr/src/hardenedbsd-10-stable/
-=======
-SRC_DIR?=/usr/src
->>>>>>> upstream/master
+SRC_DIR?=/usr/src/HardenedBSD/
 CFGDIR?=conf
 SCRIPTSDIR=scripts
 PACKAGESDIR?=packages
@@ -112,15 +101,9 @@ RELEASE!=${UNAME} -r
 .endif
 
 .if !defined(SE)
-<<<<<<< HEAD
 IMAGE_PREFIX?=	SoloBSD
 .else
 IMAGE_PREFIX?=	SoloBSD-se
-=======
-IMAGE_PREFIX?=	mfsbsd
-.else
-IMAGE_PREFIX?=	mfsbsd-se
->>>>>>> upstream/master
 .endif
 
 IMAGE?=	${IMAGE_PREFIX}-${RELEASE}-${TARGET}.img
