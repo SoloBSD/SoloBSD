@@ -26,4 +26,3 @@ See BUILD and INSTALL files for building and installation instructions.
 
 ---------------------------------------------------------------
 Project homepage: http://solobsd.blogspot.com
-

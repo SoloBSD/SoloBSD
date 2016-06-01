@@ -31,7 +31,7 @@ MFSROOT_MAXSIZE?=160m
 #
 # Paths
 #
-SRC_DIR?=/usr/src/hardenedbsd-10-stable/
+SRC_DIR?=/usr/src/HardenedBSD/
 CFGDIR?=conf
 SCRIPTSDIR=scripts
 PACKAGESDIR?=packages
