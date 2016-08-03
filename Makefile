@@ -13,7 +13,7 @@ BASE?=/cdrom/usr/freebsd-dist
 KERNCONF?= SOLOBSD
 MFSROOT_FREE_INODES?=10%
 MFSROOT_FREE_BLOCKS?=10%
-MFSROOT_MAXSIZE?=160m
+MFSROOT_MAXSIZE?=210m
 
 # If you want to build your own kernel and make you own world, you need to set
 # -DCUSTOM or CUSTOM=1
@@ -31,7 +31,7 @@ MFSROOT_MAXSIZE?=160m
 #
 # Paths
 #
-SRC_DIR?=/usr/src/HardenedBSD/
+SRC_DIR?=/usr/src/
 CFGDIR?=conf
 SCRIPTSDIR=scripts
 PACKAGESDIR?=packages
