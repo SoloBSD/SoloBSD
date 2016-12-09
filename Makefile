@@ -1,10 +1,7 @@
 # $Id$
 #
 # mfsBSD
-# Copyright (c) 2007-2015 Martin Matuska <mm at FreeBSD.org>
-#
-# Version 2.1
-#
+# Copyright (c) 2007-2016 Martin Matuska <mm at FreeBSD.org>
 
 #
 # User-defined variables
@@ -31,7 +28,7 @@ MFSROOT_MAXSIZE?=210m
 #
 # Paths
 #
-SRC_DIR?=/usr/src/
+SRC_DIR?=/usr/src
 CFGDIR?=conf
 SCRIPTSDIR=scripts
 PACKAGESDIR?=packages
@@ -78,8 +75,10 @@ BSDLABEL=bsdlabel
 DOFS=${TOOLSDIR}/doFS.sh
 SCRIPTS=mdinit mfsbsd interfaces packages
 BOOTMODULES=acpi ahci
-MFSMODULES=geom_mirror geom_nop opensolaris zfs ext2fs snp smbus ipmi ntfs nullfs tmpfs \
-	aesni crypto cryptodev geom_eli
+MFSMODULES=aesni crypto cryptodev ext2fs geom_eli geom_mirror geom_nop ipmi \
+	ntfs nullfs opensolaris smbus snp tmpfs zfs
+#
+XZ_FLAGS=
 #
 
 .if defined(V)
@@ -343,9 +342,9 @@ ${WRKDIR}/.config_done:
 .endif
 	${_v}${MKDIR} ${_DESTDIR}/stand ${_DESTDIR}/etc/rc.conf.d
 	${_v}if [ -f "${CFGDIR}/boot.config" ]; then \
-		${INSTALL} -m 0644 ${CFGDIR}/boot.config ${_ROOTDIR}/boot.config; \
+		${INSTALL} -m 0644 ${CFGDIR}/boot.config ${_DESTDIR}/boot.config; \
 	else \
-		${INSTALL} -m 0644 ${CFGDIR}/boot.config.sample ${_ROOTDIR}/boot.config; \
+		${INSTALL} -m 0644 ${CFGDIR}/boot.config.sample ${_DESTDIR}/boot.config; \
 	fi
 	${_v}if [ -f "${CFGDIR}/loader.conf" ]; then \
 		${INSTALL} -m 0644 ${CFGDIR}/loader.conf ${_BOOTDIR}/loader.conf; \
@@ -354,9 +353,9 @@ ${WRKDIR}/.config_done:
 	fi
 	${_v}if [ -f "${CFGDIR}/rc.local" ]; then \
 		${INSTALL} -m 0744 ${CFGDIR}/rc.local ${_DESTDIR}/etc/rc.local; \
-   else \
+	else \
 		${INSTALL} -m 0744 ${CFGDIR}/rc.local.sample ${_DESTDIR}/etc/rc.local; \
-   fi
+	fi
 .for FILE in rc.conf ttys
 	${_v}if [ -f "${CFGDIR}/${FILE}" ]; then \
 		${INSTALL} -m 0644 ${CFGDIR}/${FILE} ${_DESTDIR}/etc/${FILE}; \
@@ -407,9 +406,11 @@ ${WRKDIR}/.config_done:
 genkeys: config ${WRKDIR}/.genkeys_done
 ${WRKDIR}/.genkeys_done:
 	@echo -n "Generating SSH host keys ..."
-	${_v}${SSHKEYGEN} -t rsa1 -b 1024 -f ${_DESTDIR}/etc/ssh/ssh_host_key -N '' > /dev/null
-	${_v}${SSHKEYGEN} -t dsa -f ${_DESTDIR}/etc/ssh/ssh_host_dsa_key -N '' > /dev/null
+	${_v}${SSHKEYGEN} -t rsa1 -b 1024 -f ${_DESTDIR}/etc/ssh/ssh_host_key -N '' > /dev/null 2> /dev/null || true
+	${_v}${SSHKEYGEN} -t dsa -f ${_DESTDIR}/etc/ssh/ssh_host_dsa_key -N '' > /dev/null 2> /dev/null || true
 	${_v}${SSHKEYGEN} -t rsa -f ${_DESTDIR}/etc/ssh/ssh_host_rsa_key -N '' > /dev/null
+	${_v}${SSHKEYGEN} -t ecdsa -f ${_DESTDIR}/etc/ssh/ssh_host_ecdsa_key -N '' > /dev/null
+	${_v}${SSHKEYGEN} -t ed25519 -f ${_DESTDIR}/etc/ssh/ssh_host_ed25519_key -N '' > /dev/null
 	${_v}${TOUCH} ${WRKDIR}/.genkeys_done
 	@echo " done"
 
@@ -431,7 +432,7 @@ ${WRKDIR}/.compress-usr_done:
 .else
 	@echo -n "Compressing root ..."
 	${_v}${TAR} -c -C ${_ROOTDIR} -f - rw | \
-	${XZ} -v -c > ${_ROOTDIR}/root.txz
+	${XZ} ${XZ_FLAGS} -v -c > ${_ROOTDIR}/root.txz
 	${_v}${RM} -rf ${_DESTDIR} && ${MKDIR} ${_DESTDIR}
 .endif
 	${_v}${TOUCH} ${WRKDIR}/.compress-usr_done
@@ -485,12 +486,12 @@ ${WRKDIR}/.boot_done:
 . endif
 .endfor
 .if defined(ROOTHACK)
-	@echo -n "Installing tmpfs module for roothack ..."
 	${_v}${MKDIR} -p ${_ROOTDIR}/boot/modules
 	${_v}${INSTALL} -m 0666 ${_BOOTDIR}/kernel/tmpfs.ko ${_ROOTDIR}/boot/modules
-	@echo " done"
 .endif
 	${_v}${RM} -rf ${_BOOTDIR}/kernel ${_BOOTDIR}/*.symbols
+	${_v}${MKDIR} -p ${WRKDIR}/boot
+	${_v}${CP} -p ${_DESTDIR}/boot/pmbr ${_DESTDIR}/boot/gptboot ${WRKDIR}/boot	
 	${_v}${TOUCH} ${WRKDIR}/.boot_done
 	@echo " done"
 
@@ -533,7 +534,7 @@ ${IMAGE}:
 	${_v}${RM} -rf ${WRKDIR}/mnt ${WRKDIR}/trees
 	${_v}${MV} ${WRKDIR}/disk.img ${.TARGET}
 .else
-	${_v}${TOOLSDIR}/do_gpt.sh ${.TARGET} ${WRKDIR}/disk 0 ${_ROOTDIR}/boot ${VERB}
+	${_v}${TOOLSDIR}/do_gpt.sh ${.TARGET} ${WRKDIR}/disk 0 ${WRKDIR}/boot ${VERB}
 .endif
 	@echo " done"
 	${_v}${LS} -l ${.TARGET}
