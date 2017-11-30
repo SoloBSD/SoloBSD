@@ -26,4 +26,4 @@ e.g. /dev/ada0s1
 
 See [BUILD](./BUILD.md) and [INSTALL](./INSTALL.md) for building and installation instructions.
 
-Project homepage: http://solobsd.blogspot.mx
+Project homepage: http://solobsd.ga
