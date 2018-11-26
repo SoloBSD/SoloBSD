@@ -7,4 +7,4 @@
 
 # Uncomment to display a random cookie each login:
 # if ( -x /usr/games/fortune ) /usr/games/fortune -s
-if ( -f /usr/local/bin/mksh ) exec /usr/local/bin/mksh
+if ( -f /usr/local/bin/oksh ) exec /usr/local/bin/oksh

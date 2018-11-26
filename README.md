@@ -1,6 +1,6 @@
 # SoloBSD
 
-Copyright (c) 2015-2016 Guillermo Garcia Rojas C. <garciarojas at gmail.com>
+Copyright (c) 2015-2018 Guillermo Garcia Rojas C. <solobsd at solobsd.org>
 
 Version 2.3
 
@@ -26,4 +26,4 @@ e.g. /dev/ada0s1
 
 See [BUILD](./BUILD.md) and [INSTALL](./INSTALL.md) for building and installation instructions.
 
-Project homepage: http://solobsd.ga
+Project homepage: https://SoloBSD.org
